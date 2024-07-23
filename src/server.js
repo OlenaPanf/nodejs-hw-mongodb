@@ -3,7 +3,7 @@ import cors from 'cors';
 import pino from 'pino';
 import pinoHttp from 'pino-http';
 import { env } from './utils/env.js';
-import router from './routers/contacts.js'; // Імпортуємо новий роутер
+import router from './routers/contacts.js';
 
 const PORT = Number(env('PORT', 3000));
 
