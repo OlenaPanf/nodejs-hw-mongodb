@@ -6,9 +6,9 @@ import {
 const router = express.Router();
 
 // Роут для отримання всіх контактів
-router.get('/contacts', getAllContacts);
+router.get('/', getAllContacts);
 
 // Роут для отримання контакту за ID
-router.get('/contacts/:contactId', getContactByIdHandler);
+router.get('/:contactId', getContactByIdHandler);
 
 export default router;
