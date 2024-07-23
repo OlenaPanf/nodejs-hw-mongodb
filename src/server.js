@@ -3,6 +3,7 @@ import cors from 'cors';
 import pino from 'pino';
 import pinoHttp from 'pino-http';
 import { env } from './utils/env.js';
+import router from './routers/contacts.js'; // Імпортуємо новий роутер
 
 const PORT = Number(env('PORT', 3000));
 
@@ -22,13 +23,11 @@ export function setupServer() {
   // Налаштування логгера pino
   app.use(httpLogger);
 
-  // Додати обробку JSON
+  // Додаю обробку JSON
   app.use(express.json());
 
-  // Додамо обробник для GET-запиту на головний маршрут
-  //   app.get('/', (req, res) => {
-  //     res.send('Hello, world!');
-  //   });
+  // Додаю роутер
+  app.use('/contacts', router); // Можна використовувати будь-який префікс, наприклад '/api', але я '/contacts'
 
   // Обробка неіснуючих роутів
   app.use((req, res, next) => {
