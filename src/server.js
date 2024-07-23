@@ -2,16 +2,13 @@ import express from 'express';
 import cors from 'cors';
 import pino from 'pino';
 import pinoHttp from 'pino-http';
-import dotenv from 'dotenv';
+import { env } from './utils/env.js';
 
-dotenv.config();
+const PORT = Number(env('PORT', 3000));
 
 const logger = pino({
   transport: {
     target: 'pino-pretty',
-    // options: {
-    //   colorize: true,
-    // },
   },
 });
 
@@ -45,8 +42,6 @@ export function setupServer() {
       error: err.message,
     });
   });
-
-  const PORT = process.env.PORT || 3000;
 
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
