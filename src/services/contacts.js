@@ -9,3 +9,13 @@ export const getContacts = async () => {
     throw error;
   }
 };
+
+export const getContactById = async (contactId) => {
+  try {
+    const contact = await Contact.findById(contactId);
+    return contact;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
