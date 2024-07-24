@@ -5,13 +5,13 @@ export const getAllContacts = async (req, res) => {
   try {
     const contacts = await getContacts();
     res.status(200).json({
-      status: 'success',
+      status: 200,
       message: 'Successfully found contacts!',
       data: contacts,
     });
   } catch (error) {
     res.status(500).json({
-      status: 'error',
+      status: 500,
       message: 'Failed to fetch contacts',
       error: error.message,
     });
@@ -32,12 +32,13 @@ export const getContactByIdHandler = async (req, res) => {
       });
     } else {
       res.status(404).json({
+        status: 404,
         message: 'Contact not found',
       });
     }
   } catch (error) {
     res.status(500).json({
-      status: 'error',
+      status: 500,
       message: 'Failed to fetch contact',
       error: error.message,
     });
