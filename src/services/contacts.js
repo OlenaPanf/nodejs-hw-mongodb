@@ -19,3 +19,14 @@ export const getContactById = async (contactId) => {
     throw error;
   }
 };
+
+export const addContact = async (contactData) => {
+  try {
+    const newContact = new Contact(contactData);
+    await newContact.save();
+    return newContact;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};

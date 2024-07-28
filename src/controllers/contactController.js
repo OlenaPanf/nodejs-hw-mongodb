@@ -1,4 +1,8 @@
-import { getContacts, getContactById } from '../services/contacts.js';
+import {
+  getContacts,
+  getContactById,
+  addContact,
+} from '../services/contacts.js';
 import createHttpError from 'http-errors';
 
 // Контролер для отримання всіх контактів
@@ -23,5 +27,30 @@ export const getContactByIdHandler = async (req, res, next) => {
     status: 200,
     message: `Successfully found contact with id ${contactId}!`,
     data: contact,
+  });
+};
+
+// Контролер для створення нового контакту
+export const createContact = async (req, res, next) => {
+  const { name, phoneNumber, email, isFavourite, contactType } = req.body;
+
+  if (!name || !phoneNumber || !contactType) {
+    throw createHttpError(
+      400,
+      'Name, phoneNumber and contactType are required',
+    );
+  }
+
+  const newContact = await addContact({
+    name,
+    phoneNumber,
+    email,
+    isFavourite,
+    contactType,
+  });
+  res.status(201).json({
+    status: 201,
+    message: 'Successfully created a contact!',
+    data: newContact,
   });
 };
