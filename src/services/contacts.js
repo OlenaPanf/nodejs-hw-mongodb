@@ -30,3 +30,17 @@ export const addContact = async (contactData) => {
     throw error;
   }
 };
+
+export const updateContactById = async (contactId, contactData) => {
+  try {
+    const updatedContact = await Contact.findByIdAndUpdate(
+      contactId,
+      contactData,
+      { new: true },
+    );
+    return updatedContact;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};

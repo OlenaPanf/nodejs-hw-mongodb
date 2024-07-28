@@ -3,6 +3,7 @@ import {
   getAllContacts,
   getContactByIdHandler,
   createContact,
+  updateContact,
 } from '../controllers/contactController.js';
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 
@@ -16,5 +17,8 @@ router.get('/:contactId', ctrlWrapper(getContactByIdHandler));
 
 // Роут для створення нового контакту
 router.post('/', ctrlWrapper(createContact));
+
+// Роут для оновлення контакту за ID
+router.patch('/:contactId', ctrlWrapper(updateContact));
 
 export default router;
