@@ -44,3 +44,13 @@ export const updateContactById = async (contactId, contactData) => {
     throw error;
   }
 };
+
+export const deleteContactById = async (contactId) => {
+  try {
+    const deletedContact = await Contact.findByIdAndDelete(contactId);
+    return deletedContact;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};

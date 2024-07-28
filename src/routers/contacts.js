@@ -4,6 +4,7 @@ import {
   getContactByIdHandler,
   createContact,
   updateContact,
+  deleteContact,
 } from '../controllers/contactController.js';
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 
@@ -20,5 +21,8 @@ router.post('/', ctrlWrapper(createContact));
 
 // Роут для оновлення контакту за ID
 router.patch('/:contactId', ctrlWrapper(updateContact));
+
+// Роут для видалення контакту за ID
+router.delete('/:contactId', ctrlWrapper(deleteContact));
 
 export default router;

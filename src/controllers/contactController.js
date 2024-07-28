@@ -3,6 +3,7 @@ import {
   getContactById,
   addContact,
   updateContactById,
+  deleteContactById,
 } from '../services/contacts.js';
 import createHttpError from 'http-errors';
 
@@ -78,4 +79,17 @@ export const updateContact = async (req, res, next) => {
     message: 'Successfully patched a contact!',
     data: updatedContact,
   });
+};
+
+// Контролер для видалення контакту за ID
+export const deleteContact = async (req, res, next) => {
+  const { contactId } = req.params;
+
+  const deletedContact = await deleteContactById(contactId);
+
+  if (!deletedContact) {
+    throw createHttpError(404, 'Contact not found');
+  }
+
+  res.status(204).send();
 };
