@@ -4,6 +4,8 @@ import pino from 'pino';
 import pinoHttp from 'pino-http';
 import { env } from './utils/env.js';
 import router from './routers/contacts.js';
+import { errorHandler } from './middlewares/errorHandler.js';
+import { notFoundHandler } from './middlewares/notFoundHandler.js';
 
 const PORT = Number(env('PORT', 3000));
 
@@ -27,20 +29,13 @@ export function setupServer() {
   app.use(express.json());
 
   // Додаю роутер
-  app.use('/contacts', router); // Можна використовувати будь-який префікс, наприклад '/api', але я '/contacts'
+  app.use('/contacts', router);
 
   // Обробка неіснуючих роутів
-  app.use((req, res, next) => {
-    res.status(404).json({ message: 'Not found' });
-  });
+  app.use(notFoundHandler);
 
   // Обробка помилок
-  app.use((err, req, res, next) => {
-    res.status(500).json({
-      message: 'Something went wrong',
-      error: err.message,
-    });
-  });
+  app.use(errorHandler);
 
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
