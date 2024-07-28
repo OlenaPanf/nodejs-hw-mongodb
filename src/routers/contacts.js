@@ -1,9 +1,10 @@
-import express from 'express';
+import { Router } from 'express';
 import {
   getAllContacts,
   getContactByIdHandler,
 } from '../controllers/contactController.js';
-const router = express.Router();
+
+const router = Router();
 
 // Роут для отримання всіх контактів
 router.get('/', getAllContacts);
