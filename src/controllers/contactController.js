@@ -1,5 +1,6 @@
 import {
-  getContacts,
+  getPaginatedContacts,
+  //getContacts,
   getContactById,
   addContact,
   updateContactById,
@@ -7,13 +8,29 @@ import {
 } from '../services/contacts.js';
 import createHttpError from 'http-errors';
 
-// Контролер для отримання всіх контактів
+// Контролер для отримання всіх контактів з пагінацією
 export const getAllContacts = async (req, res) => {
-  const contacts = await getContacts();
+  const {
+    contacts,
+    page,
+    perPage,
+    totalItems,
+    totalPages,
+    hasNextPage,
+    hasPreviousPage,
+  } = await getPaginatedContacts(req.query);
   res.status(200).json({
     status: 200,
     message: 'Successfully found contacts!',
-    data: contacts,
+    data: {
+      data: contacts,
+      page,
+      perPage,
+      totalItems,
+      totalPages,
+      hasPreviousPage,
+      hasNextPage,
+    },
   });
 };
 
