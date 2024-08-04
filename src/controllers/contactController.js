@@ -7,9 +7,11 @@ import {
   deleteContactById,
 } from '../services/contacts.js';
 import createHttpError from 'http-errors';
+import { parseSortParams } from '../utils/parseSortParams.js';
 
 // Контролер для отримання всіх контактів з пагінацією
 export const getAllContacts = async (req, res) => {
+  const { sortBy, sortOrder } = parseSortParams(req.query);
   const {
     contacts,
     page,
@@ -18,7 +20,8 @@ export const getAllContacts = async (req, res) => {
     totalPages,
     hasNextPage,
     hasPreviousPage,
-  } = await getPaginatedContacts(req.query);
+  } = await getPaginatedContacts(req.query, { sortBy, sortOrder });
+
   res.status(200).json({
     status: 200,
     message: 'Successfully found contacts!',
