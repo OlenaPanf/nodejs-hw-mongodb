@@ -1,21 +1,29 @@
 import Contact from '../models/contact.js';
 import { calculatePaginationData } from '../utils/calculatePaginationData.js';
 import { parsePaginationParams } from '../utils/parsePaginationParams.js';
+import { parseFilterParams } from '../utils/parseFilterParams.js';
 
 export const getPaginatedContacts = async (query, { sortBy, sortOrder }) => {
   try {
     // Парсинг параметрів пагінації
     const { page, perPage } = parsePaginationParams(query);
     const skip = (page - 1) * perPage;
+    // Парсинг параметрів фільтрації
+    const { type, isFavourite } = parseFilterParams(query);
+
+    // Створення об'єкта фільтру
+    const filter = {};
+    if (type) filter.contactType = type;
+    if (isFavourite !== null) filter.isFavourite = isFavourite;
 
     // Отримую контакти та загальну кількість контактів паралельно
     const [contacts, totalItems] = await Promise.all([
-      Contact.find({})
+      Contact.find(filter)
         .sort({ [sortBy]: sortOrder === 'desc' ? -1 : 1 })
         .skip(skip)
         .limit(perPage)
         .exec(),
-      Contact.countDocuments({}),
+      Contact.countDocuments(filter),
     ]);
 
     // Розраховую дані пагінації
