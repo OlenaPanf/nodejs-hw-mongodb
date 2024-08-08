@@ -3,7 +3,7 @@ import cors from 'cors';
 import pino from 'pino';
 import pinoHttp from 'pino-http';
 import { env } from './utils/env.js';
-import router from './routers/contacts.js';
+import router from './routers/index.js'; // імпортуємо новий файл роутів
 import { errorHandler } from './middlewares/errorHandler.js';
 import { notFoundHandler } from './middlewares/notFoundHandler.js';
 
@@ -19,23 +19,14 @@ export function setupServer() {
   const app = express();
   const httpLogger = pinoHttp({ logger });
 
-  // Налаштування cors
-  app.use(cors());
+  app.use(cors()); // Налаштування cors
+  app.use(httpLogger); // Налаштування логгера pino
+  app.use(express.json()); // Додаю обробку JSON
 
-  // Налаштування логгера pino
-  app.use(httpLogger);
+  app.use('/', router); // Додаю об'єднаний новий роутера
 
-  // Додаю обробку JSON
-  app.use(express.json());
-
-  // Додаю роутер
-  app.use('/contacts', router);
-
-  // Обробка неіснуючих роутів
-  app.use(notFoundHandler);
-
-  // Обробка помилок
-  app.use(errorHandler);
+  app.use(notFoundHandler); // Обробка неіснуючих роутів
+  app.use(errorHandler); // Обробка помилок
 
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);

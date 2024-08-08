@@ -8,6 +8,12 @@ const userSchema = new mongoose.Schema(
   },
   { timestamps: true, versionKey: false }, // автоматично додає поля createdAt і updatedAt
 );
+//для видалення паролю
+userSchema.methods.toJSON = function () {
+  const obj = this.toObject();
+  delete obj.password;
+  return obj;
+};
 
 const User = mongoose.model('User', userSchema);
 
