@@ -10,23 +10,19 @@ import { THIRTY_DAYS } from '../constants/index.js';
 export const registerUser = async (req, res, next) => {
   const { name, email, password } = req.body;
 
-  try {
-    // Спроба зареєструвати нового користувача
-    const newUser = await registerNewUser({ name, email, password });
+  // Реєструю нового користувача
+  const newUser = await registerNewUser({ name, email, password });
 
-    res.status(201).json({
-      status: 201,
-      message: 'Successfully registered a user!',
-      data: {
-        name: newUser.name,
-        email: newUser.email,
-        createdAt: newUser.createdAt,
-        updatedAt: newUser.updatedAt,
-      },
-    });
-  } catch (error) {
-    next(error);
-  }
+  res.status(201).json({
+    status: 201,
+    message: 'Successfully registered a user!',
+    data: {
+      name: newUser.name,
+      email: newUser.email,
+      createdAt: newUser.createdAt,
+      updatedAt: newUser.updatedAt,
+    },
+  });
 };
 
 //====================логін====================================
