@@ -3,7 +3,11 @@ import { calculatePaginationData } from '../utils/calculatePaginationData.js';
 import { parsePaginationParams } from '../utils/parsePaginationParams.js';
 import { parseFilterParams } from '../utils/parseFilterParams.js';
 
-export const getPaginatedContacts = async (query, { sortBy, sortOrder }) => {
+export const getPaginatedContacts = async (
+  query,
+  { sortBy, sortOrder },
+  userId,
+) => {
   try {
     // Парсинг параметрів пагінації
     const { page, perPage } = parsePaginationParams(query);
@@ -12,7 +16,7 @@ export const getPaginatedContacts = async (query, { sortBy, sortOrder }) => {
     const { type, isFavourite } = parseFilterParams(query);
 
     // Створення об'єкта фільтру
-    const filter = {};
+    const filter = { userId };
     if (type) filter.contactType = type;
     if (isFavourite !== null) filter.isFavourite = isFavourite;
 
@@ -39,9 +43,9 @@ export const getPaginatedContacts = async (query, { sortBy, sortOrder }) => {
   }
 };
 
-export const getContacts = async () => {
+export const getContacts = async (userId) => {
   try {
-    const contacts = await Contact.find({});
+    const contacts = await Contact.find({ userId });
     return contacts;
   } catch (error) {
     console.error(error);
@@ -49,9 +53,9 @@ export const getContacts = async () => {
   }
 };
 
-export const getContactById = async (contactId) => {
+export const getContactById = async (contactId, userId) => {
   try {
-    const contact = await Contact.findById(contactId);
+    const contact = await Contact.findOne({ _id: contactId, userId });
     return contact;
   } catch (error) {
     console.error(error);
@@ -59,9 +63,12 @@ export const getContactById = async (contactId) => {
   }
 };
 
-export const addContact = async (contactData) => {
+export const addContact = async (contactData, userId) => {
   try {
-    const newContact = new Contact(contactData);
+    const newContact = new Contact({
+      ...contactData,
+      userId, // Додаємо userId
+    });
     await newContact.save();
     return newContact;
   } catch (error) {
@@ -70,10 +77,10 @@ export const addContact = async (contactData) => {
   }
 };
 
-export const updateContactById = async (contactId, contactData) => {
+export const updateContactById = async (contactId, contactData, userId) => {
   try {
-    const updatedContact = await Contact.findByIdAndUpdate(
-      contactId,
+    const updatedContact = await Contact.findOneAndUpdate(
+      { _id: contactId, userId },
       contactData,
       { new: true },
     );
@@ -84,9 +91,12 @@ export const updateContactById = async (contactId, contactData) => {
   }
 };
 
-export const deleteContactById = async (contactId) => {
+export const deleteContactById = async (contactId, userId) => {
   try {
-    const deletedContact = await Contact.findByIdAndDelete(contactId);
+    const deletedContact = await Contact.findOneAndDelete({
+      _id: contactId,
+      userId,
+    });
     return deletedContact;
   } catch (error) {
     console.error(error);
