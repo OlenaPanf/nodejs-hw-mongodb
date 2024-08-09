@@ -5,6 +5,7 @@ import { FIFTEEN_MINUTES, THIRTY_DAYS } from '../constants/index.js';
 import Session from '../models/session.js';
 import { randomBytes } from 'crypto';
 
+//====================реєстрація====================================
 export const registerNewUser = async ({ name, email, password }) => {
   // Перевірка, чи користувач із такою поштою вже існує
   const existingUser = await User.findOne({ email });
@@ -30,6 +31,7 @@ export const registerNewUser = async ({ name, email, password }) => {
   return newUser.toJSON();
 };
 
+//====================логін====================================
 export const loginUser = async ({ email, password }) => {
   const user = await User.findOne({ email });
   if (!user) {
@@ -57,4 +59,43 @@ export const loginUser = async ({ email, password }) => {
   });
 
   return session;
+};
+
+//====================рефреш====================================
+export const refreshUserSession = async ({ sessionId, refreshToken }) => {
+  const session = await Session.findOne({
+    _id: sessionId,
+    refreshToken,
+  });
+
+  if (!session) {
+    throw createHttpError(401, 'Session not found');
+  }
+
+  const isSessionTokenExpired =
+    new Date() > new Date(session.refreshTokenValidUntil);
+
+  if (isSessionTokenExpired) {
+    throw createHttpError(401, 'Session token expired');
+  }
+
+  await Session.deleteOne({ _id: sessionId, refreshToken });
+
+  const newAccessToken = randomBytes(30).toString('base64');
+  const newRefreshToken = randomBytes(30).toString('base64');
+
+  const newSession = await Session.create({
+    userId: session.userId,
+    accessToken: newAccessToken,
+    refreshToken: newRefreshToken,
+    accessTokenValidUntil: new Date(Date.now() + FIFTEEN_MINUTES),
+    refreshTokenValidUntil: new Date(Date.now() + THIRTY_DAYS),
+  });
+
+  return newSession;
+};
+
+//====================логаут====================================
+export const logoutUser = async (sessionId) => {
+  await Session.deleteOne({ _id: sessionId });
 };
