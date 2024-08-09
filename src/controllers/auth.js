@@ -1,7 +1,7 @@
 import {
   registerNewUser,
   loginUser,
-  refreshUserSession,
+  refreshUser,
   logoutUser,
 } from '../services/auth.js';
 import { THIRTY_DAYS } from '../constants/index.js';
@@ -30,7 +30,7 @@ export const registerUser = async (req, res, next) => {
 };
 
 //====================логін====================================
-export const login = async (req, res, next) => {
+export const login = async (req, res) => {
   const { email, password } = req.body;
 
   const session = await loginUser({ email, password });
@@ -55,10 +55,10 @@ export const login = async (req, res, next) => {
 };
 
 //====================рефреш====================================
-export const refreshSession = async (req, res, next) => {
+export const refresh = async (req, res) => {
   const { refreshToken, sessionId } = req.cookies;
 
-  const session = await refreshUserSession({ refreshToken, sessionId });
+  const session = await refreshUser({ refreshToken, sessionId });
 
   // логіка для створення та встановлення нових токенів
   res.cookie('refreshToken', session.refreshToken, {
@@ -80,7 +80,7 @@ export const refreshSession = async (req, res, next) => {
 };
 
 //====================логаут====================================
-export const logout = async (req, res, next) => {
+export const logout = async (req, res) => {
   // Викликаємо сервіс для видалення сесії
   if (req.cookies.sessionId) {
     await logoutUser(req.cookies.sessionId);

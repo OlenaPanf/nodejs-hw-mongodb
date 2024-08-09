@@ -62,7 +62,7 @@ export const loginUser = async ({ email, password }) => {
 };
 
 //====================рефреш====================================
-export const refreshUserSession = async ({ sessionId, refreshToken }) => {
+export const refreshUser = async ({ sessionId, refreshToken }) => {
   const session = await Session.findOne({
     _id: sessionId,
     refreshToken,
