@@ -13,8 +13,12 @@ import {
   updateContactSchema,
 } from '../validation/contactValidation.js';
 import { isValidId } from '../middlewares/isValidId.js';
+import { authenticate } from '../middlewares/authenticate.js';
 
 const router = Router();
+
+// Застосовую authenticate до всіх роутів
+router.use(authenticate);
 
 // Роут для отримання всіх контактів
 router.get('/', ctrlWrapper(getAllContacts));
