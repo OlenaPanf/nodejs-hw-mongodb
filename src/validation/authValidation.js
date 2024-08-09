@@ -16,3 +16,14 @@ export const registerUserSchema = Joi.object({
     'any.required': 'Password is required',
   }),
 });
+//  Крок 4
+export const loginUserSchema = Joi.object({
+  email: Joi.string().email().required().messages({
+    'string.email': 'Invalid email address',
+    'any.required': 'Email is required',
+  }),
+  password: Joi.string().min(6).required().messages({
+    'string.min': 'Password must be at least {#limit} characters long',
+    'any.required': 'Password is required',
+  }),
+});

@@ -1,5 +1,5 @@
-import { registerNewUser } from '../services/auth.js';
-import createHttpError from 'http-errors';
+import { registerNewUser, loginUser } from '../services/auth.js';
+import { THIRTY_DAYS } from '../constants/index.js';
 
 export const registerUser = async (req, res, next) => {
   const { name, email, password } = req.body;
@@ -19,29 +19,35 @@ export const registerUser = async (req, res, next) => {
       },
     });
   } catch (error) {
-    // Використання createHttpError для створення помилок
-    if (error.status && error.message) {
-      next(error);
-    } else {
-      next(createHttpError(500, 'Something went wrong'));
-    }
+    next(error);
   }
 };
 
-//або
-// catch (error) {
-//     next(error);
-//   }
+//логін користувача
+export const login = async (req, res, next) => {
+  const { email, password } = req.body;
 
-//лекція
-// import { registerUser } from '../services/auth.js';
+  try {
+    const session = await loginUser({ email, password });
 
-// export const registerUserController = async (req, res) => {
-//   const user = await registerUser(req.body);
+    // логіка для створення та встановлення токенів
+    res.cookie('refreshToken', session.refreshToken, {
+      httpOnly: true,
+      expires: new Date(Date.now() + THIRTY_DAYS),
+    });
+    res.cookie('sessionId', session._id, {
+      httpOnly: true,
+      expires: new Date(Date.now() + THIRTY_DAYS),
+    });
 
-//   res.status(201).json({
-//     status: 201,
-//     message: 'Successfully registered a user!',
-//     data: user,
-//   });
-// };
+    res.status(200).json({
+      status: 200,
+      message: 'Successfully logged in an user!',
+      data: {
+        accessToken: session.accessToken,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};

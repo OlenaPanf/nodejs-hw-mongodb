@@ -6,6 +6,7 @@ import { env } from './utils/env.js';
 import router from './routers/index.js'; // імпортуємо новий файл роутів
 import { errorHandler } from './middlewares/errorHandler.js';
 import { notFoundHandler } from './middlewares/notFoundHandler.js';
+import cookieParser from 'cookie-parser';
 
 const PORT = Number(env('PORT', 3000));
 
@@ -22,6 +23,7 @@ export function setupServer() {
   app.use(cors()); // Налаштування cors
   app.use(httpLogger); // Налаштування логгера pino
   app.use(express.json()); // Додаю обробку JSON
+  app.use(cookieParser()); // Додаю middleware для обробки cookies
 
   app.use('/', router); // Додаю об'єднаний новий роутера
 
