@@ -67,7 +67,7 @@ export const addContact = async (contactData, userId) => {
   try {
     const newContact = new Contact({
       ...contactData,
-      userId, // Додаємо userId
+      userId, // Додаю userId, передане з контролера
     });
     await newContact.save();
     return newContact;

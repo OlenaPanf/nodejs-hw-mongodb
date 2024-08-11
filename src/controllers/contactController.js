@@ -66,14 +66,16 @@ export const createContact = async (req, res, next) => {
     );
   }
 
-  const newContact = await addContact({
-    name,
-    phoneNumber,
-    email,
-    isFavourite,
-    contactType,
-    userId, // додавання userId
-  });
+  const newContact = await addContact(
+    {
+      name,
+      phoneNumber,
+      email,
+      isFavourite,
+      contactType,
+    },
+    userId, // передаю userId окремо
+  );
   res.status(201).json({
     status: 201,
     message: 'Successfully created a contact!',
