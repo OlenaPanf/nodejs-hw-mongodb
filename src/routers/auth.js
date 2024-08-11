@@ -3,8 +3,15 @@ import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 import {
   registerUserSchema,
   loginUserSchema,
+  sendResetEmailSchema,
 } from '../validation/authValidation.js';
-import { registerUser, login, refresh, logout } from '../controllers/auth.js';
+import {
+  registerUser,
+  login,
+  refresh,
+  logout,
+  sendResetEmailController,
+} from '../controllers/auth.js';
 import { validateBody } from '../middlewares/validateBody.js';
 
 const router = Router();
@@ -20,5 +27,11 @@ router.post('/login', validateBody(loginUserSchema), ctrlWrapper(login));
 router.post('/refresh', ctrlWrapper(refresh));
 
 router.post('/logout', ctrlWrapper(logout));
+//скидання
+router.post(
+  '/request-reset-email',
+  validateBody(sendResetEmailSchema),
+  ctrlWrapper(sendResetEmailController),
+);
 
 export default router;

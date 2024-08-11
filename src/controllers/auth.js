@@ -3,6 +3,7 @@ import {
   loginUser,
   refreshUser,
   logoutUser,
+  sendResetToken,
 } from '../services/auth.js';
 import { THIRTY_DAYS } from '../constants/index.js';
 
@@ -88,4 +89,14 @@ export const logout = async (req, res) => {
 
   // Відповідь без тіла і статусом 204
   res.status(204).end();
+};
+
+//====================скидання паролю====================================
+export const sendResetEmailController = async (req, res) => {
+  await sendResetToken(req.body.email);
+  res.json({
+    status: 200,
+    message: 'Reset password email has been successfully sent.',
+    data: {},
+  });
 };
