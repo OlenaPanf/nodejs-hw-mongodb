@@ -20,6 +20,6 @@ export const sendEmail = async (options) => {
     throw createHttpError(
       500,
       'Failed to send the email, please try again later.',
-    ); // Використовуйте createHttpError для створення помилки
+    );
   }
 };

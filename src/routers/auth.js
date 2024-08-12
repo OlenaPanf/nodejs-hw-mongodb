@@ -4,6 +4,7 @@ import {
   registerUserSchema,
   loginUserSchema,
   sendResetEmailSchema,
+  resetPasswordSchema,
 } from '../validation/authValidation.js';
 import {
   registerUser,
@@ -11,6 +12,7 @@ import {
   refresh,
   logout,
   sendResetEmailController,
+  resetPasswordController,
 } from '../controllers/auth.js';
 import { validateBody } from '../middlewares/validateBody.js';
 
@@ -27,11 +29,19 @@ router.post('/login', validateBody(loginUserSchema), ctrlWrapper(login));
 router.post('/refresh', ctrlWrapper(refresh));
 
 router.post('/logout', ctrlWrapper(logout));
-//скидання
+
+//запит на зміну паролю
 router.post(
-  '/request-reset-email',
+  '/send-reset-email',
   validateBody(sendResetEmailSchema),
   ctrlWrapper(sendResetEmailController),
+);
+
+//зміна паролю
+router.post(
+  '/reset-pwd',
+  validateBody(resetPasswordSchema),
+  ctrlWrapper(resetPasswordController),
 );
 
 export default router;

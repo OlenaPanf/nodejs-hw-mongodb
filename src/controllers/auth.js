@@ -4,6 +4,7 @@ import {
   refreshUser,
   logoutUser,
   sendResetToken,
+  resetPassword,
 } from '../services/auth.js';
 import { THIRTY_DAYS } from '../constants/index.js';
 
@@ -91,12 +92,25 @@ export const logout = async (req, res) => {
   res.status(204).end();
 };
 
-//====================скидання паролю====================================
+//====================запит на скидання паролю===================
 export const sendResetEmailController = async (req, res) => {
   await sendResetToken(req.body.email);
   res.json({
     status: 200,
     message: 'Reset password email has been successfully sent.',
+    data: {},
+  });
+};
+
+//====================зміна паролю====================================
+export const resetPasswordController = async (req, res) => {
+  const { token, password } = req.body;
+
+  await resetPassword({ token, password });
+
+  res.status(200).json({
+    status: 200,
+    message: 'Password has been successfully reset.',
     data: {},
   });
 };

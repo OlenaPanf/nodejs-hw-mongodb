@@ -113,7 +113,7 @@ export const logoutUser = async (sessionId) => {
   await Session.deleteOne({ _id: sessionId });
 };
 
-//====================скидання паролю====================================
+//====================запит на скидання паролю===================
 export const sendResetToken = async (email) => {
   const user = await User.findOne({ email });
   if (!user) {
@@ -151,4 +151,24 @@ export const sendResetToken = async (email) => {
     subject: 'Reset your password',
     html,
   });
+};
+
+//====================зміна паролю====================================
+export const resetPassword = async ({ token, password }) => {
+  try {
+    const decoded = jwt.verify(token, env('JWT_SECRET'));
+
+    const user = await User.findOne({ _id: decoded.sub, email: decoded.email });
+    if (!user) {
+      throw createHttpError(404, 'User not found!');
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    user.password = hashedPassword;
+    await user.save();
+
+    return user;
+  } catch {
+    throw createHttpError(401, 'Token is expired or invalid.');
+  }
 };
