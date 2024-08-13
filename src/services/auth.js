@@ -165,7 +165,11 @@ export const resetPassword = async ({ token, password }) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    //зміна паролю
     await User.updateOne({ _id: user._id }, { password: hashedPassword });
+
+    //видалення сесії
+    await Session.deleteOne({ userId: user._id });
 
     return user;
   } catch {
