@@ -164,8 +164,8 @@ export const resetPassword = async ({ token, password }) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    user.password = hashedPassword;
-    await user.save();
+
+    await User.updateOne({ _id: user._id }, { password: hashedPassword });
 
     return user;
   } catch {
