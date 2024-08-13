@@ -7,6 +7,7 @@ import router from './routers/index.js'; // імпортуємо новий фа
 import { errorHandler } from './middlewares/errorHandler.js';
 import { notFoundHandler } from './middlewares/notFoundHandler.js';
 import cookieParser from 'cookie-parser';
+import { UPLOAD_DIR } from './constants/index.js';
 
 const PORT = Number(env('PORT', 3000));
 
@@ -26,6 +27,8 @@ export function setupServer() {
   app.use(cookieParser()); // Додаю middleware для обробки cookies
 
   app.use('/', router); // Додаю об'єднаний новий роутера
+
+  app.use('/uploads', express.static(UPLOAD_DIR)); //додаю до нашого express можливість роздавати статичні файли
 
   app.use(notFoundHandler); // Обробка неіснуючих роутів
   app.use(errorHandler); // Обробка помилок

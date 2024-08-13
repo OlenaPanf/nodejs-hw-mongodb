@@ -8,6 +8,9 @@ import {
 } from '../services/contacts.js';
 import createHttpError from 'http-errors';
 import { parseSortParams } from '../utils/parseSortParams.js';
+import { saveFileToUploadDir } from '../utils/saveFileToUploadDir.js';
+import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
+import { env } from '../utils/env.js';
 
 // Контролер для отримання всіх контактів з пагінацією
 export const getAllContacts = async (req, res) => {
@@ -58,12 +61,23 @@ export const getContactByIdHandler = async (req, res, next) => {
 export const createContact = async (req, res, next) => {
   const { name, phoneNumber, email, isFavourite, contactType } = req.body;
   const userId = req.user._id; // отримання userId з req.user
+  const photo = req.file; // Отримання фото з req.file
 
   if (!name || !phoneNumber || !contactType) {
     throw createHttpError(
       400,
       'Name, phoneNumber and contactType are required',
     );
+  }
+
+  let photoUrl;
+
+  if (photo) {
+    if (env('ENABLE_CLOUDINARY') === 'true') {
+      photoUrl = await saveFileToCloudinary(photo);
+    } else {
+      photoUrl = await saveFileToUploadDir(photo);
+    }
   }
 
   const newContact = await addContact(
@@ -73,6 +87,7 @@ export const createContact = async (req, res, next) => {
       email,
       isFavourite,
       contactType,
+      photo: photoUrl, // Зберігання URL фото у базу
     },
     userId, // передаю userId окремо
   );
@@ -88,6 +103,30 @@ export const updateContact = async (req, res, next) => {
   const { contactId } = req.params;
   const { name, phoneNumber, email, isFavourite, contactType } = req.body;
   const userId = req.user._id; // отримання userId з req.user
+  const photo = req.file; // Отримання фото з req.file
+
+  let photoUrl;
+
+  if (photo) {
+    if (env('ENABLE_CLOUDINARY') === 'true') {
+      photoUrl = await saveFileToCloudinary(photo);
+    } else {
+      photoUrl = await saveFileToUploadDir(photo);
+    }
+  }
+
+  /* в photo лежить обʼєкт файлу
+		{
+		  fieldname: 'photo',
+		  originalname: 'download.jpeg',
+		  encoding: '7bit',
+		  mimetype: 'image/jpeg',
+		  destination: '/Users/borysmeshkov/Projects/goit-study/students-app/temp',
+		  filename: '1710709919677_download.jpeg',
+		  path: '/Users/borysmeshkov/Projects/goit-study/students-app/temp/1710709919677_download.jpeg',
+		  size: 7
+	  }
+	*/
 
   const updatedContact = await updateContactById(
     contactId,
@@ -97,6 +136,7 @@ export const updateContact = async (req, res, next) => {
       email,
       isFavourite,
       contactType,
+      photo: photoUrl, // Зберігання URL фото у базу
     },
     userId,
   );

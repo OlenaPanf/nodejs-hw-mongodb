@@ -14,6 +14,7 @@ import {
 } from '../validation/contactValidation.js';
 import { isValidId } from '../middlewares/isValidId.js';
 import { authenticate } from '../middlewares/authenticate.js';
+import { upload } from '../middlewares/multer.js';
 
 const router = Router();
 
@@ -27,12 +28,19 @@ router.get('/', ctrlWrapper(getAllContacts));
 router.get('/:contactId', isValidId, ctrlWrapper(getContactByIdHandler));
 
 // Роут для створення нового контакту
-router.post('/', validateBody(createContactSchema), ctrlWrapper(createContact));
+router.post(
+  '/',
+  //isValidId, //перевірити чи треба взагалі передавати
+  upload.single('photo'), // додаємо цю middleware
+  validateBody(createContactSchema),
+  ctrlWrapper(createContact),
+);
 
 // Роут для оновлення контакту за ID
 router.patch(
   '/:contactId',
   isValidId,
+  upload.single('photo'), // додаємо цю middleware
   validateBody(updateContactSchema),
   ctrlWrapper(updateContact),
 );
