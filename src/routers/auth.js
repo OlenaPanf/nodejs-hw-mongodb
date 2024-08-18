@@ -5,6 +5,7 @@ import {
   loginUserSchema,
   sendResetEmailSchema,
   resetPasswordSchema,
+  loginWithGoogleOAuthSchema,
 } from '../validation/authValidation.js';
 import {
   registerUser,
@@ -13,6 +14,8 @@ import {
   logout,
   sendResetEmailController,
   resetPasswordController,
+  getGoogleOAuthUrlController,
+  loginWithGoogleController,
 } from '../controllers/auth.js';
 import { validateBody } from '../middlewares/validateBody.js';
 
@@ -42,6 +45,16 @@ router.post(
   '/reset-pwd',
   validateBody(resetPasswordSchema),
   ctrlWrapper(resetPasswordController),
+);
+
+//отримання посилання авторизації
+router.get('/get-oauth-url', ctrlWrapper(getGoogleOAuthUrlController));
+
+//підтвердження або створення
+router.post(
+  '/confirm-oauth',
+  validateBody(loginWithGoogleOAuthSchema),
+  ctrlWrapper(loginWithGoogleController),
 );
 
 export default router;

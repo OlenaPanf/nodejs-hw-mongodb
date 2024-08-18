@@ -17,6 +17,10 @@ import { sendEmail } from '../utils/sendMail.js';
 import handlebars from 'handlebars';
 import path from 'node:path';
 import fs from 'node:fs/promises';
+import {
+  getFullNameFromGoogleTokenPayload,
+  validateCode,
+} from '../utils/googleOAuth2.js';
 
 //====================реєстрація====================================
 export const registerNewUser = async ({ name, email, password }) => {
@@ -175,4 +179,45 @@ export const resetPassword = async ({ token, password }) => {
   } catch {
     throw createHttpError(401, 'Token is expired or invalid.');
   }
+};
+
+//дістаємо закодовані дані і або створюємо користувача, або використовуємо вже існуючого
+export const loginOrSignupWithGoogle = async (code) => {
+  const loginTicket = await validateCode(code);
+  const payload = loginTicket.getPayload();
+  if (!payload) throw createHttpError(401);
+
+  let user = await User.findOne({ email: payload.email });
+  if (!user) {
+    const password = await bcrypt.hash(randomBytes(10), 10);
+    const createdUser = await User.create({
+      email: payload.email,
+      name: getFullNameFromGoogleTokenPayload(payload),
+      password,
+    });
+
+    return Session.create({
+      userId: createdUser._id,
+      accessToken: randomBytes(30).toString('base64'),
+      refreshToken: randomBytes(30).toString('base64'),
+      accessTokenValidUntil: new Date(Date.now() + FIFTEEN_MINUTES),
+      refreshTokenValidUntil: new Date(Date.now() + THIRTY_DAYS),
+    });
+  }
+
+  // Логіка для створення сесії
+  // const accessToken = randomBytes(30).toString('base64');
+  // const refreshToken = randomBytes(30).toString('base64');
+
+  await Session.deleteOne({ userId: user._id });
+
+  const newSession = await Session.create({
+    userId: user._id,
+    accessToken: randomBytes(30).toString('base64'),
+    refreshToken: randomBytes(30).toString('base64'),
+    accessTokenValidUntil: new Date(Date.now() + FIFTEEN_MINUTES),
+    refreshTokenValidUntil: new Date(Date.now() + THIRTY_DAYS),
+  });
+
+  return newSession;
 };

@@ -5,8 +5,10 @@ import {
   logoutUser,
   sendResetToken,
   resetPassword,
+  loginOrSignupWithGoogle,
 } from '../services/auth.js';
 import { THIRTY_DAYS } from '../constants/index.js';
+import { generateAuthUrl } from '../utils/googleOAuth2.js';
 
 //====================рестрація====================================
 export const registerUser = async (req, res, next) => {
@@ -112,5 +114,43 @@ export const resetPasswordController = async (req, res) => {
     status: 200,
     message: 'Password has been successfully reset.',
     data: {},
+  });
+};
+
+//==============отримання посилання авторизації=======================
+export const getGoogleOAuthUrlController = async (req, res) => {
+  const url = generateAuthUrl();
+  res.json({
+    status: 200,
+    message: 'Successfully get Google OAuth url!',
+    data: {
+      url,
+    },
+  });
+};
+
+//дістаємо закодовані дані і або створюємо користувача, або використовуємо вже існуючого
+export const loginWithGoogleController = async (req, res) => {
+  const session = await loginOrSignupWithGoogle(req.body.code);
+
+  // Логіка для налаштування сесії
+  const { accessToken, refreshToken, _id } = session;
+
+  res.cookie('refreshToken', refreshToken, {
+    httpOnly: true,
+    expires: new Date(Date.now() + THIRTY_DAYS),
+  });
+
+  res.cookie('sessionId', _id, {
+    httpOnly: true,
+    expires: new Date(Date.now() + THIRTY_DAYS),
+  });
+
+  res.json({
+    status: 200,
+    message: 'Successfully logged in via Google OAuth!',
+    data: {
+      accessToken,
+    },
   });
 };
