@@ -21,19 +21,13 @@ parameters:
     schema:
       type: string
       example: 'contactType'
-    description: "All contacts's fields can be mentioned"
+    description: Sort contacts by parameter
   - in: query
     name: sortOrder
     schema:
       type: string
       enum: ['asc', 'desc']
       example: 'asc'
-  - in: query
-    name: gender
-    schema:
-      type: string
-      enum: ['male', 'female', 'other']
-      example: male
   - in: query
     name: contactType
     description: Filter contacts by type
