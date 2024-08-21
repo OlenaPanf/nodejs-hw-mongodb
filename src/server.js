@@ -8,6 +8,7 @@ import { errorHandler } from './middlewares/errorHandler.js';
 import { notFoundHandler } from './middlewares/notFoundHandler.js';
 import cookieParser from 'cookie-parser';
 import { UPLOAD_DIR } from './constants/index.js';
+import { swaggerDocs } from './middlewares/swaggerDocs.js';
 
 const PORT = Number(env('PORT', 3000));
 
@@ -29,6 +30,7 @@ export function setupServer() {
   app.use('/', router); // Додаю об'єднаний новий роутера
 
   app.use('/uploads', express.static(UPLOAD_DIR)); //додаю до нашого express можливість роздавати статичні файли
+  app.use('/api-docs', swaggerDocs());
 
   app.use(notFoundHandler); // Обробка неіснуючих роутів
   app.use(errorHandler); // Обробка помилок
