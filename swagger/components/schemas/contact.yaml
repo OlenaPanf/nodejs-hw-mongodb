@@ -41,3 +41,13 @@ properties:
     description: "Contact's user id"
     type: string
     example: 66b8d580cc975a8886ddc6f0
+  createdAt:
+    description: 'Time when the contact was added'
+    type: string
+    format: date-time
+    example: '2024-08-13T16:43:42'
+  updatedAt:
+    description: 'Time when the contact was last updated'
+    type: string
+    format: date-time
+    example: '2024-08-13T20:40:28'
